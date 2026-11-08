@@ -73,6 +73,8 @@
   .fb a { font-size: 0.78rem; color: #6b7280; text-decoration: none; border: 1px solid #d3d7de; padding: 7px 14px; border-radius: 999px; display: inline-block; background: #fff; }
   .fb a:hover { color: #3b82f6; border-color: #3b82f6; }
   @media (prefers-color-scheme: dark) { .fb a { background: #262a31; color: #9aa0a6; border-color: #3a4048; } .fb a:hover { color: #60a5fa; border-color: #60a5fa; } }
+  #cmp-table { font-size: 0.8rem; }
+  #cmp-table td, #cmp-table th { padding: 7px 6px; white-space: nowrap; }
   .content h2 { font-size: 1.05rem; margin: 22px 0 8px; }
   .content h3 { font-size: 0.9rem; margin: 14px 0 6px; }
   .content p { font-size: 0.85rem; line-height: 1.55; margin-bottom: 8px; }
@@ -96,13 +98,54 @@
 <body>
   <h1>🇸🇬🇮🇩 Income Tax Calculator</h1>
   <div class="tabs">
-    <div class="tab active" id="tab-sg" onclick="switchTab('sg')">🇸🇬 Singapore</div>
-    <div class="tab" id="tab-id" onclick="switchTab('id')">🇮🇩 Indonesia</div>
-    <div class="tab" id="tab-my" onclick="switchTab('my')">🇲🇾 Malaysia</div>
+    <div class="tab active" id="tab-cmp" onclick="switchTab('cmp')">⚖️ Compare</div>
+    <div class="tab" id="tab-sg" onclick="switchTab('sg')">🇸🇬 SG</div>
+    <div class="tab" id="tab-id" onclick="switchTab('id')">🇮🇩 ID</div>
+    <div class="tab" id="tab-my" onclick="switchTab('my')">🇲🇾 MY</div>
+  </div>
+
+  <!-- ============ COMPARE ============ -->
+  <div class="page active" id="page-cmp">
+    <div class="note">Enter one salary and see it taxed as a <b>standard single resident employee</b> in all three countries, converted to your display currency. CPF/EPF are retirement savings, not lost money — shown separately. Use the country tabs for full detail (age, dependants, marital status).</div>
+    <div class="card">
+      <h2>💵 Your income</h2>
+      <div class="row">
+        <div class="field grow2"><label for="cmp-salary">Monthly salary</label>
+          <input type="number" id="cmp-salary" placeholder="e.g. 5000" inputmode="decimal">
+        </div>
+        <div class="field"><label for="cmp-cur">Currency</label>
+          <select id="cmp-cur"></select>
+        </div>
+        <div class="field"><label for="cmp-disp">Show in</label>
+          <select id="cmp-disp"></select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="sg-age2">SG: CPF?</label>
+          <select id="cmp-sgcpf">
+            <option value="yes" selected>Citizen/PR</option>
+            <option value="no">No CPF</option>
+          </select>
+        </div>
+        <div class="field"><label for="cmp-idstatus">ID: PTKP</label>
+          <select id="cmp-idstatus">
+            <option value="0" selected>TK/0</option>
+            <option value="10">K/0</option>
+            <option value="11">K/1</option>
+            <option value="13">K/3</option>
+          </select>
+        </div>
+      </div>
+      <div class="note" style="margin:6px 0 0" id="cmp-fxnote">loading rates…</div>
+    </div>
+    <div class="result" id="cmp-result" style="display:none">
+      <table id="cmp-table"><thead><tr><th>Country</th><th>Income /yr</th><th>Tax /yr</th><th>Eff.</th><th>CPF/EPF /yr</th><th>Take-home /mo</th></tr></thead><tbody></tbody></table>
+      <div class="note" style="margin-top:8px">Sorted by take-home per month, in your display currency. SG assumes resident below 55 with the options above; ID and MY assume standard single residents.</div>
+    </div>
   </div>
 
   <!-- ============ SINGAPORE ============ -->
-  <div class="page active" id="page-sg">
+  <div class="page" id="page-sg">
     <div class="note">Auto-computes CPF relief (only if you actually contribute CPF — citizenship/PR status, not tax residency) and earned income relief per IRAS rules. Foreigners on EP can be full tax residents yet pay no CPF.</div>
     <div class="card">
       <h2>📋 Your details</h2>
@@ -331,7 +374,7 @@ const $ = id => document.getElementById(id);
 const fmtSG = n => 'S$' + Number(n).toLocaleString('en-SG', { maximumFractionDigits: 0 });
 const fmtID = n => 'Rp' + Math.round(Number(n)).toLocaleString('id-ID');
 function switchTab(c) {
-  for (const x of ['sg', 'id', 'my']) {
+  for (const x of ['cmp', 'sg', 'id', 'my']) {
     $('tab-' + x).classList.toggle('active', x === c);
     $('page-' + x).classList.toggle('active', x === c);
   }
@@ -545,6 +588,77 @@ function computeMY() {
   $('my-result').style.display = '';
 }
 
+
+/* ================= COMPARE ================= */
+const CMP_FALLBACK = { SGD: 1.281547, IDR: 18097.90284, MYR: 4.0559, USD: 1, EUR: 0.895793, GBP: 0.747473, JPY: 158.318418, AUD: 1.535, CNY: 7.09, HKD: 7.78 };
+const CMP_LIST = ['SGD','USD','IDR','MYR','EUR','GBP','JPY','AUD','CNY','HKD'];
+let cmpRates = null, cmpRateDate = null;
+for (const sel of ['cmp-cur', 'cmp-disp']) {
+  $(sel).innerHTML = CMP_LIST.map(c => `<option ${c === 'SGD' ? 'selected' : ''}>${c}</option>`).join('');
+}
+async function cmpLoadFx() {
+  try {
+    const r = await fetch('https://open.er-api.com/v6/latest/USD');
+    const j = await r.json();
+    if (j && j.rates) {
+      cmpRates = {}; for (const c of CMP_LIST) cmpRates[c] = j.rates[c];
+      cmpRateDate = new Date(j.time_last_update_utc).toISOString().slice(0, 10);
+    }
+  } catch {}
+  if (!cmpRates) { cmpRates = { ...CMP_FALLBACK }; cmpRateDate = '2026-11-08'; }
+  $('cmp-fxnote').textContent = 'FX: open.er-api.com' + (cmpRateDate === '2026-11-08' ? ' (offline snapshot)' : ' · ' + cmpRateDate);
+}
+function toUSD(amount, cur) { return amount / cmpRates[cur]; }
+function fromUSD(usd, cur) { return usd * cmpRates[cur]; }
+const cmpFmt = (n, cur) => (cur === 'IDR' ? 'Rp' : cur === 'SGD' ? 'S$' : cur === 'MYR' ? 'RM' : cur + ' ') + Math.round(n).toLocaleString('en-SG');
+
+function cmpTaxFor(country, annualLocal, opts) {
+  // returns { tax, savings, eff } in local currency; standard single resident defaults
+  if (country === 'SG') {
+    const cpf = opts.sgCpf === 'no' ? 0 : annualLocal * 0.20;
+    const chargeable = Math.max(0, annualLocal - Math.min(cpf, SG_CPF_CAP) - SG_EIR.below55);
+    const t = sgResidentTax(chargeable).tax;
+    return { tax: t, savings: cpf, eff: annualLocal > 0 ? t / annualLocal * 100 : 0 };
+  }
+  if (country === 'ID') {
+    const bj = Math.min(annualLocal * 0.05, 6000000);
+    const jp = annualLocal * 0.02;
+    const status = opts.idStatus; const married = status >= 10, deps = status % 10;
+    const ptkp = 54000000 + (married ? 4500000 : 0) + deps * 4500000;
+    const pkp = Math.max(0, Math.floor((Math.max(0, annualLocal - bj - jp) - ptkp) / 1000) * 1000);
+    const t = idTax(pkp).tax;
+    return { tax: t, savings: jp, eff: annualLocal > 0 ? t / annualLocal * 100 : 0 };
+  }
+  if (country === 'MY') {
+    const epf = annualLocal * 0.11;
+    const chargeable = Math.max(0, annualLocal - 9000 - Math.min(epf, 4000));
+    let t = myTax(chargeable).tax;
+    if (chargeable <= 35000 && t > 0) t = Math.max(0, t - 400);
+    return { tax: t, savings: epf, eff: annualLocal > 0 ? t / annualLocal * 100 : 0 };
+  }
+}
+
+function computeCMP() {
+  if (!cmpRates) return;
+  const salary = Math.max(0, Number($('cmp-salary').value) || 0);
+  const cur = $('cmp-cur').value, disp = $('cmp-disp').value;
+  if (salary <= 0) { $('cmp-result').style.display = 'none'; return; }
+  const annualUSD = toUSD(salary * 12, cur);
+  const opts = { sgCpf: $('cmp-sgcpf').value, idStatus: Number($('cmp-idstatus').value) };
+  const rows = [];
+  for (const [code, name, localCur] of [['SG', '🇸🇬 SG', 'SGD'], ['ID', '🇮🇩 ID', 'IDR'], ['MY', '🇲🇾 MY', 'MYR']]) {
+    const annualLocal = fromUSD(annualUSD, localCur);
+    const r = cmpTaxFor(code, annualLocal, opts);
+    rows.push({ country: name, localCur, annualLocal, tax: r.tax, eff: r.eff, savings: r.savings, dispTH: (annualUSD - toUSD(r.tax + r.savings, localCur)) / 12 * cmpRates[disp] });
+  }
+  rows.sort((a, b) => b.dispTH - a.dispTH);
+  const tbody = $('cmp-table').querySelector('tbody');
+  tbody.innerHTML = rows.map(r =>
+    `<tr><td>${r.country}</td><td>${cmpFmt(r.annualLocal, r.localCur)}</td><td>${cmpFmt(r.tax, r.localCur)}</td><td>${r.eff.toFixed(1)}%</td><td>${cmpFmt(r.savings, r.localCur)}</td><td><b>${cmpFmt(r.dispTH, disp)}</b></td></tr>`
+  ).join('');
+  $('cmp-result').style.display = '';
+}
+
 /* ================= wiring ================= */
 ['sg-ya','sg-res','sg-cpf','sg-age','sg-months','sg-salary','sg-bonus','sg-other','sg-reliefs','sg-spouse','sg-children','sg-parStaying','sg-parNot'].forEach(id => {
   $(id).addEventListener('input', computeSG); $(id).addEventListener('change', computeSG);
@@ -555,6 +669,10 @@ function computeMY() {
 ['my-res','my-age','my-salary','my-bonus','my-months','my-reliefs'].forEach(id => {
   $(id).addEventListener('input', computeMY); $(id).addEventListener('change', computeMY);
 });
+['cmp-salary','cmp-cur','cmp-disp','cmp-sgcpf','cmp-idstatus'].forEach(id => {
+  $(id).addEventListener('input', computeCMP); $(id).addEventListener('change', computeCMP);
+});
+cmpLoadFx().then(() => computeCMP());
 </script>
 </body>
 </html>
