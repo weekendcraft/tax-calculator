@@ -62,6 +62,10 @@
   @media (prefers-color-scheme: dark) { .stat { background: #10342a; } }
   .stat .v { font-weight: 700; font-size: 0.98rem; }
   .stat .l { font-size: 0.62rem; color: #6b7280; text-transform: uppercase; letter-spacing: .04em; }
+  .fb { display: block; text-align: center; margin: 2px 0 14px; }
+  .fb a { font-size: 0.78rem; color: #6b7280; text-decoration: none; border: 1px solid #d3d7de; padding: 7px 14px; border-radius: 999px; display: inline-block; background: #fff; }
+  .fb a:hover { color: #3b82f6; border-color: #3b82f6; }
+  @media (prefers-color-scheme: dark) { .fb a { background: #262a31; color: #9aa0a6; border-color: #3a4048; } .fb a:hover { color: #60a5fa; border-color: #60a5fa; } }
   .disclaimer { font-size: 0.68rem; color: #8b919b; margin-top: 14px; line-height: 1.45; }
   .disclaimer a { color: #059669; }
   details { margin-top: 10px; font-size: 0.82rem; }
@@ -78,6 +82,7 @@
   <div class="tabs">
     <div class="tab active" id="tab-sg" onclick="switchTab('sg')">🇸🇬 Singapore</div>
     <div class="tab" id="tab-id" onclick="switchTab('id')">🇮🇩 Indonesia</div>
+    <div class="tab" id="tab-my" onclick="switchTab('my')">🇲🇾 Malaysia</div>
   </div>
 
   <!-- ============ SINGAPORE ============ -->
@@ -237,10 +242,69 @@
     </div>
   </div>
 
+  <!-- ============ MALAYSIA ============ -->
+  <div class="page" id="page-my">
+    <div class="note">Estimate your Malaysian personal income tax (LHDN YA2024+ brackets). Auto-deducts individual relief RM9,000 and EPF employee contribution (relief capped RM4,000). RM400 rebate auto-applied if chargeable income ≤ RM35,000.</div>
+    <div class="card">
+      <h2>📋 Your details</h2>
+      <div class="row">
+        <div class="field"><label for="my-res">Tax residency</label>
+          <select id="my-res">
+            <option value="resident" selected>Resident</option>
+            <option value="nonresident">Non-resident</option>
+          </select>
+        </div>
+        <div class="field"><label for="my-age">Age at year end</label>
+          <select id="my-age">
+            <option value="below60" selected>Below 60</option>
+            <option value="60plus">60 &amp; above</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="my-salary">Monthly salary (RM)</label>
+          <input type="number" id="my-salary" placeholder="e.g. 8000" inputmode="decimal">
+        </div>
+        <div class="field"><label for="my-bonus">Bonus (RM)</label>
+          <input type="number" id="my-bonus" placeholder="0" inputmode="decimal">
+        </div>
+        <div class="field"><label for="my-months">Months</label>
+          <input type="number" id="my-months" value="12" min="1" max="12" inputmode="numeric">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="my-reliefs">Other reliefs (RM, opt.)</label>
+          <input type="number" id="my-reliefs" placeholder="0" inputmode="decimal">
+        </div>
+      </div>
+    </div>
+    <div class="result" id="my-result" style="display:none">
+      <div class="big" id="my-netTax">—</div>
+      <div class="biglabel" id="my-netLabel">estimated tax payable</div>
+      <div class="line"><span class="k">Total income</span><span id="my-income">—</span></div>
+      <div class="line"><span class="k">Individual relief</span><span id="my-indRelief">—</span></div>
+      <div class="line"><span class="k">EPF relief (capped RM4,000)</span><span id="my-epfRelief">—</span></div>
+      <div class="line"><span class="k">Other reliefs</span><span id="my-otherRelief">—</span></div>
+      <div class="line"><span class="k"><b>Chargeable income</b></span><span id="my-chargeable"><b>—</b></span></div>
+      <div class="line" id="my-rebateRow" style="display:none"><span class="k">RM400 rebate (≤RM35k)</span><span id="my-rebate">—</span></div>
+      <div class="stats">
+        <div class="stat"><div class="v" id="my-effRate">—</div><div class="l">effective rate</div></div>
+        <div class="stat"><div class="v" id="my-margRate">—</div><div class="l">marginal rate</div></div>
+        <div class="stat"><div class="v" id="my-monthlyNet">—</div><div class="l">net / month</div></div>
+      </div>
+      <details>
+        <summary>Bracket breakdown</summary>
+        <table><thead><tr><th>Band</th><th>Rate</th><th>Tax</th></tr></thead><tbody id="my-brackets"></tbody></table>
+      </details>
+    </div>
+  </div>
+
+  <div class="fb"><a href="https://docs.google.com/forms/d/e/1FAIpQLSeJ4P2Ch76kIHVl6KZBA1MNx8pil4kZ32nLrQDQLr8oKQllVg/viewform?usp=pp_url&amp;entry.267710623=tax-calculator" target="_blank" rel="noopener">💬 Send feedback</a></div>
+
   <div class="disclaimer">
     Estimates for education only, not tax advice.
     <b>SG:</b> IRAS resident brackets “From YA 2024 onwards”; YA 2026 personal rebate (60%, cap S$200) auto-applied. CPF relief only for Citizen/PR (employee rates by age band, OW ceiling YA2027 S$8,000/mo, YA2026 S$7,400/mo, annual cap S$37,740); PRs in their first 1–2 years pay graduated rates (not modelled). Dependant reliefs: spouse S$2,000 (living with you, spouse income ≤S$8,000), QCR S$4,000/child, parent S$9,000 staying / S$5,500 not staying — amounts may be shared between claimants, enter your share. Non-residents: employment income at 15% flat or resident rates, whichever is <i>higher</i>; no reliefs; other income 24%. Sources: <a href="https://www.iras.gov.sg">IRAS</a>, <a href="https://www.cpf.gov.sg">CPF</a>.
-    <b>ID:</b> PPh 21 Pasal 17 UU HPP (5/15/25/30/35%), PTKP Rp54 jt + Rp4,5 jt kawin + Rp4,5 jt/tanggungan (maks 3), biaya jabatan 5% maks Rp6 jt/th, iuran pensiun deduktibel (BPJS Kesehatan tidak deduktibel); potongan bulanan Jan–Nov memakai TER (PP 58/2023) — kalkulator ini menampilkan angka tahunan. Sumber: <a href="https://www.pajak.go.id">DJP</a>.
+    <b>MY:</b> LHDN YA2024+ brackets (0–30%), individual relief RM9,000, EPF employee 11% (60+: 5.5%) with relief capped RM4,000, RM400 rebate if chargeable ≤ RM35,000; non-residents flat 30%, no reliefs. Sources: <a href="https://www.hasil.gov.my">LHDN/Hasil</a>. <b>ID:</b> PPh 21 Pasal 17 UU HPP (5/15/25/30/35%), PTKP Rp54 jt + Rp4,5 jt kawin + Rp4,5 jt/tanggungan (maks 3), biaya jabatan 5% maks Rp6 jt/th, iuran pensiun deduktibel (BPJS Kesehatan tidak deduktibel); potongan bulanan Jan–Nov memakai TER (PP 58/2023) — kalkulator ini menampilkan angka tahunan. Sumber: <a href="https://www.pajak.go.id">DJP</a>.
   </div>
 
 <script>
@@ -249,7 +313,7 @@ const $ = id => document.getElementById(id);
 const fmtSG = n => 'S$' + Number(n).toLocaleString('en-SG', { maximumFractionDigits: 0 });
 const fmtID = n => 'Rp' + Math.round(Number(n)).toLocaleString('id-ID');
 function switchTab(c) {
-  for (const x of ['sg', 'id']) {
+  for (const x of ['sg', 'id', 'my']) {
     $('tab-' + x).classList.toggle('active', x === c);
     $('page-' + x).classList.toggle('active', x === c);
   }
@@ -398,12 +462,80 @@ function computeID() {
   $('id-result').style.display = '';
 }
 
+
+/* ================= MALAYSIA ================= */
+const MY_BANDS = [ [0, 0, 0], [5000, 1, 0], [20000, 3, 150], [35000, 6, 600], [50000, 11, 1500], [70000, 19, 3700], [100000, 25, 9400], [400000, 26, 84400], [600000, 28, 136400], [2000000, 30, 528400] ];
+const fmtMY = n => 'RM' + Number(n).toLocaleString('en-MY', { maximumFractionDigits: 0 });
+
+function myTax(ci) {
+  let tax = 0, marginal = 0;
+  const rows = [];
+  for (let i = 0; i < MY_BANDS.length; i++) {
+    const [lo, rate, cum] = MY_BANDS[i];
+    const hi = i + 1 < MY_BANDS.length ? MY_BANDS[i + 1][0] : Infinity;
+    if (ci <= lo) break;
+    const slice = Math.min(ci, hi) - lo;
+    const t = slice * rate / 100;
+    tax = cum + t; marginal = rate;
+    rows.push([`First ${fmtMY(Math.min(ci, hi))}`, rate + '%', fmtMY(cum + t)]);
+  }
+  return { tax, marginal, rows };
+}
+
+function computeMY() {
+  const res = $('my-res').value, age = $('my-age').value;
+  const salary = Math.max(0, Number($('my-salary').value) || 0);
+  const bonus = Math.max(0, Number($('my-bonus').value) || 0);
+  const months = Math.min(12, Math.max(1, Number($('my-months').value) || 12));
+  const otherRel = Math.max(0, Number($('my-reliefs').value) || 0);
+  const income = salary * months + bonus;
+  if (income <= 0) { $('my-result').style.display = 'none'; return; }
+
+  let net, chargeable, breakdown = [], marginal = 0, gross, rebate = 0, epfCash = 0;
+  if (res === 'resident') {
+    const rate = age === '60plus' ? 5.5 : 11;
+    epfCash = income * rate / 100;
+    const epfRelief = Math.min(epfCash, 4000);
+    const indRelief = 9000;
+    const appliedOther = Math.min(otherRel, Math.max(0, income - indRelief - epfRelief));
+    chargeable = Math.max(0, income - indRelief - epfRelief - appliedOther);
+    const r = myTax(chargeable);
+    net = r.tax; marginal = r.marginal; breakdown = r.rows; gross = net;
+    if (chargeable <= 35000 && net > 0) { rebate = 400; net = Math.max(0, net - 400); }
+    $('my-indRelief').textContent = fmtMY(indRelief);
+    $('my-epfRelief').textContent = fmtMY(epfRelief);
+    $('my-otherRelief').textContent = fmtMY(appliedOther);
+    $('my-rebateRow').style.display = rebate > 0 ? '' : 'none';
+    $('my-rebate').textContent = '−' + fmtMY(rebate);
+  } else {
+    net = income * 0.30; gross = net; chargeable = income; marginal = 30;
+    breakdown = [['Employment + other (flat)', '30%', fmtMY(net)]];
+    $('my-indRelief').textContent = fmtMY(0);
+    $('my-epfRelief').textContent = fmtMY(0);
+    $('my-otherRelief').textContent = fmtMY(0);
+    $('my-rebateRow').style.display = 'none';
+  }
+
+  $('my-netTax').textContent = fmtMY(net);
+  $('my-netLabel').textContent = `estimated tax payable (${res === 'resident' ? 'resident' : 'non-resident'})`;
+  $('my-income').textContent = fmtMY(income);
+  $('my-chargeable').textContent = fmtMY(chargeable);
+  $('my-effRate').textContent = (net / income * 100).toFixed(1) + '%';
+  $('my-margRate').textContent = marginal.toFixed(1) + '%';
+  $('my-monthlyNet').textContent = fmtMY(months > 0 ? (income - epfCash - net) / 12 : 0);
+  $('my-brackets').innerHTML = breakdown.map(x => `<tr><td>${x[0]}</td><td>${x[1]}</td><td>${x[2]}</td></tr>`).join('');
+  $('my-result').style.display = '';
+}
+
 /* ================= wiring ================= */
 ['sg-ya','sg-res','sg-cpf','sg-age','sg-months','sg-salary','sg-bonus','sg-other','sg-reliefs','sg-spouse','sg-children','sg-parStaying','sg-parNot'].forEach(id => {
   $(id).addEventListener('input', computeSG); $(id).addEventListener('change', computeSG);
 });
 ['id-salary','id-thr','id-status','id-jp','id-lain'].forEach(id => {
   $(id).addEventListener('input', computeID); $(id).addEventListener('change', computeID);
+});
+['my-res','my-age','my-salary','my-bonus','my-months','my-reliefs'].forEach(id => {
+  $(id).addEventListener('input', computeMY); $(id).addEventListener('change', computeMY);
 });
 </script>
 </body>
