@@ -66,6 +66,14 @@
   .fb a { font-size: 0.78rem; color: #6b7280; text-decoration: none; border: 1px solid #d3d7de; padding: 7px 14px; border-radius: 999px; display: inline-block; background: #fff; }
   .fb a:hover { color: #3b82f6; border-color: #3b82f6; }
   @media (prefers-color-scheme: dark) { .fb a { background: #262a31; color: #9aa0a6; border-color: #3a4048; } .fb a:hover { color: #60a5fa; border-color: #60a5fa; } }
+  .content h2 { font-size: 1.05rem; margin: 22px 0 8px; }
+  .content h3 { font-size: 0.9rem; margin: 14px 0 6px; }
+  .content p { font-size: 0.85rem; line-height: 1.55; margin-bottom: 8px; }
+  .content ul { margin: 0 0 8px 18px; }
+  .content li { font-size: 0.85rem; line-height: 1.5; margin-bottom: 4px; }
+  .content details { margin-top: 4px; }
+  .content table { font-size: 0.78rem; }
+  .updated { font-size: 0.68rem; color: #8b919b; margin-bottom: 8px; }
   .disclaimer { font-size: 0.68rem; color: #8b919b; margin-top: 14px; line-height: 1.45; }
   .disclaimer a { color: #059669; }
   details { margin-top: 10px; font-size: 0.82rem; }
@@ -76,6 +84,7 @@
   th { color: #6b7280; font-size: 0.66rem; text-transform: uppercase; }
   @media (prefers-color-scheme: dark) { td, th { border-color: #2a2e35; } th { color: #9aa0a6; } }
 </style>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "SG · ID · MY Income Tax Calculator", "url": "https://weekendcraft.github.io/tax-calculator/", "applicationCategory": "FinanceApplication", "operatingSystem": "Any", "description": "Free income tax calculator for Singapore (IRAS YA2026/YA2027), Indonesia (PPh 21) and Malaysia (LHDN) with automatic CPF, PTKP and EPF reliefs. Runs entirely in your browser.", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How much income tax do I pay on S$8,000/month in Singapore?", "acceptedAnswer": {"@type": "Answer", "text": "On S$96,000/year as a tax-resident PR: CPF relief S$19,200 and earned income relief S$1,000 reduce chargeable income to S$75,800, giving tax of about S$3,056 a year."}}, {"@type": "Question", "name": "Do foreigners working in Singapore pay CPF?", "acceptedAnswer": {"@type": "Answer", "text": "No. CPF applies only to Singapore Citizens and Permanent Residents. Foreigners on Employment Passes pay no CPF but can still be full tax residents under the 183-day rule."}}, {"@type": "Question", "name": "I moved to Singapore in November — how is my first year taxed?", "acceptedAnswer": {"@type": "Answer", "text": "Under IRAS's two-year straddling concession, continuous employment spanning two calendar years with at least 183 combined days makes you tax resident for both years, so the short first year is taxed at progressive resident rates instead of 15% flat."}}, {"@type": "Question", "name": "What is PTKP in Indonesia?", "acceptedAnswer": {"@type": "Answer", "text": "PTKP is Indonesia's non-taxable income threshold: Rp54,000,000 for a single person, plus Rp4,500,000 if married and plus Rp4,500,000 per dependent up to three."}}, {"@type": "Question", "name": "How is THR taxed in Indonesia?", "acceptedAnswer": {"@type": "Answer", "text": "THR is part of annual gross employment income and is taxed through the annual PPh 21 calculation, not separately."}}, {"@type": "Question", "name": "What is biaya jabatan?", "acceptedAnswer": {"@type": "Answer", "text": "The Indonesian occupational-expense deduction for employees: 5% of gross employment income, capped at Rp6,000,000 per year."}}, {"@type": "Question", "name": "How much income tax do I pay on RM8,000/month in Malaysia?", "acceptedAnswer": {"@type": "Answer", "text": "On RM96,000/year as a resident: reliefs of RM9,000 (individual) and RM4,000 (EPF) reduce chargeable income to RM83,000, giving tax of about RM6,170 a year."}}, {"@type": "Question", "name": "What is the RM400 tax rebate in Malaysia?", "acceptedAnswer": {"@type": "Answer", "text": "Residents with chargeable income of RM35,000 or less receive a flat RM400 rebate subtracted from tax payable."}}, {"@type": "Question", "name": "Do non-residents pay income tax in Malaysia?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, at a flat 30% on employment income with no reliefs or rebates."}}]}]}</script>
 </head>
 <body>
   <h1>🇸🇬🇮🇩 Income Tax Calculator</h1>
@@ -300,6 +309,102 @@
   </div>
 
   <div class="fb"><a href="https://docs.google.com/forms/d/e/1FAIpQLSeJ4P2Ch76kIHVl6KZBA1MNx8pil4kZ32nLrQDQLr8oKQllVg/viewform?usp=pp_url&amp;entry.267710623=tax-calculator" target="_blank" rel="noopener">💬 Send feedback</a></div>
+
+
+<div class="content">
+  <h2>Free income tax calculator for Singapore, Indonesia &amp; Malaysia</h2>
+  <p class="updated">Last updated: November 2026 · Sources: <a href="https://www.iras.gov.sg">IRAS</a> · <a href="https://www.pajak.go.id">DJP</a> · <a href="https://www.hasil.gov.my">LHDN</a>. This calculator runs entirely in your browser — nothing you enter is sent anywhere.</p>
+  <p>Estimate your personal income tax in seconds. <b>Singapore</b>: Year of Assessment (YA) 2026 and YA 2027 with automatic CPF employee relief, earned income relief and dependant reliefs. <b>Indonesia</b>: annual PPh 21 per Pasal 17 UU HPP with PTKP, biaya jabatan and iuran pensiun (JP). <b>Malaysia</b>: LHDN YA2024+ brackets with individual relief, EPF relief and the RM400 low-income rebate. Resident and non-resident scenarios supported for all three countries.</p>
+
+  <h2>Singapore income tax rates (YA 2024 onwards)</h2>
+  <p>Singapore taxes resident individuals at progressive rates from 0% to 24%. You are a tax resident for a year of assessment if you stayed or worked in Singapore for at least 183 days in the previous calendar year, or — as a concession for people who arrive late in the year — if your employment continuously straddles two calendar years with a combined stay of at least 183 days (employees only; directors, public entertainers and professionals are excluded).</p>
+  <table>
+    <thead><tr><th>Chargeable income (S$)</th><th>Rate</th></tr></thead>
+    <tbody>
+      <tr><td>First 20,000</td><td>0%</td></tr>
+      <tr><td>Next 10,000 (20,001–30,000)</td><td>2%</td></tr>
+      <tr><td>Next 10,000 (30,001–40,000)</td><td>3.5%</td></tr>
+      <tr><td>Next 40,000 (40,001–80,000)</td><td>7%</td></tr>
+      <tr><td>Next 40,000 (80,001–120,000)</td><td>11.5%</td></tr>
+      <tr><td>Next 40,000 (120,001–160,000)</td><td>15%</td></tr>
+      <tr><td>Next 40,000 (160,001–200,000)</td><td>18%</td></tr>
+      <tr><td>Next 40,000 (200,001–240,000)</td><td>19%</td></tr>
+      <tr><td>Next 40,000 (240,001–280,000)</td><td>19.5%</td></tr>
+      <tr><td>Next 40,000 (280,001–320,000)</td><td>20%</td></tr>
+      <tr><td>Next 180,000 (320,001–500,000)</td><td>22%</td></tr>
+      <tr><td>Next 500,000 (500,001–1,000,000)</td><td>23%</td></tr>
+      <tr><td>Above 1,000,000</td><td>24%</td></tr>
+    </tbody>
+  </table>
+  <p>Only Singapore Citizens and Permanent Residents contribute to CPF (20% employee rate below age 55, with lower senior bands), and the employee contribution is deductible up to S$37,740 a year. Foreigners on Employment Passes pay no CPF even when they are full tax residents. Earned income relief is S$1,000 (below 55), S$6,000 (55–59) or S$8,000 (60 and above). For YA 2026 a personal rebate of 60% of tax payable, capped at S$200, applied automatically.</p>
+  <p><b>Worked example:</b> a resident earning S$6,500/month (S$78,000/year) with CPF: CPF relief S$15,600 + earned income relief S$1,000 → chargeable income S$61,400 → tax S$550 on the first S$40,000 plus 7% of the remaining S$21,400 = <b>S$2,048 per year (S$170/month)</b>.</p>
+
+  <h2>Indonesia PPh 21 tax rates and PTKP (UU HPP)</h2>
+  <p>Indonesia taxes resident employees' annual taxable income (Penghasilan Kena Pajak, PKP) at progressive rates from 5% to 35%. Before applying the rates, gross employment income is reduced by biaya jabatan (occupational expenses: 5% of gross, capped at Rp6,000,000/year) and employee pension contributions (Jaminan Pensiun, 2% of salary), then by the non-taxable income threshold (PTKP).</p>
+  <table>
+    <thead><tr><th>PKP (Rp)</th><th>Rate</th></tr></thead>
+    <tbody>
+      <tr><td>Up to 60,000,000</td><td>5%</td></tr>
+      <tr><td>60,000,000 – 250,000,000</td><td>15%</td></tr>
+      <tr><td>250,000,000 – 500,000,000</td><td>25%</td></tr>
+      <tr><td>500,000,000 – 5,000,000,000</td><td>30%</td></tr>
+      <tr><td>Above 5,000,000,000</td><td>35%</td></tr>
+    </tbody>
+  </table>
+  <p>PTKP (non-taxable threshold) is Rp54,000,000 for a single person, plus Rp4,500,000 if married and plus Rp4,500,000 per dependent for up to three dependents (e.g. K/1 = Rp63,000,000). THR (tunjangan hari raya) is part of annual gross employment income and is taxed in the annual calculation. Since January 2024 monthly withholding from January to November uses the effective rate table (TER, PP 58/2023), with the December withholding truing up to the annual amount.</p>
+  <p><b>Worked example:</b> an employee earning Rp15,000,000/month, married with one dependent (K/1), no bonus: gross Rp180,000,000 − biaya jabatan Rp6,000,000 (capped) − iuran pensiun Rp3,600,000 → net Rp170,400,000 − PTKP Rp63,000,000 → PKP Rp107,400,000 → PPh 21 = <b>Rp7,110,000 per year</b>.</p>
+
+  <h2>Malaysia income tax rates (LHDN, YA 2024 onwards)</h2>
+  <p>Malaysia taxes resident individuals at progressive rates from 0% to 30%. Every resident gets an individual relief of RM9,000, and employee EPF contributions (11% of salary for those below 60; 5.5% for 60 and above) are deductible up to RM4,000. If chargeable income is RM35,000 or less, a RM400 rebate reduces the tax payable. Non-residents pay a flat 30% on employment income with no reliefs.</p>
+  <table>
+    <thead><tr><th>Chargeable income (RM)</th><th>Rate</th></tr></thead>
+    <tbody>
+      <tr><td>First 5,000</td><td>0%</td></tr>
+      <tr><td>5,001 – 20,000</td><td>1%</td></tr>
+      <tr><td>20,001 – 35,000</td><td>3%</td></tr>
+      <tr><td>35,001 – 50,000</td><td>6%</td></tr>
+      <tr><td>50,001 – 70,000</td><td>11%</td></tr>
+      <tr><td>70,001 – 100,000</td><td>19%</td></tr>
+      <tr><td>100,001 – 400,000</td><td>25%</td></tr>
+      <tr><td>400,001 – 600,000</td><td>26%</td></tr>
+      <tr><td>600,001 – 2,000,000</td><td>28%</td></tr>
+      <tr><td>Above 2,000,000</td><td>30%</td></tr>
+    </tbody>
+  </table>
+  <p><b>Worked example:</b> a resident earning RM8,000/month (RM96,000/year): individual relief RM9,000 + EPF relief RM4,000 (capped) → chargeable income RM83,000 → tax RM9,400 on the first RM100,000-rate bands' portion + 19% of the RM13,000 above RM70,000 = <b>RM6,170 per year (RM514/month)</b>.</p>
+
+  <h2>Frequently asked questions</h2>
+
+  <h3>How much income tax do I pay on S$8,000/month in Singapore?</h3>
+  <p>On S$96,000/year as a tax-resident Singapore PR: CPF relief of S$19,200 and earned income relief of S$1,000 reduce chargeable income to S$75,800, giving tax of about S$3,056 a year (effective rate ≈ 3.2%). A foreigner on an Employment Pass pays no CPF, so their chargeable income would be S$95,000 and tax about S$7,540.</p>
+
+  <h3>Do foreigners working in Singapore pay CPF?</h3>
+  <p>No. CPF contributions apply only to Singapore Citizens and Permanent Residents. A foreigner on an Employment Pass or S Pass does not contribute to CPF, so there is no CPF tax relief — but they can still be a full Singapore tax resident (183-day rule), which means progressive rates and reliefs like earned income relief apply.</p>
+
+  <h3>I moved to Singapore in November — how is my first year of income taxed?</h3>
+  <p>Favourably, if you stay on. Under IRAS's two-year straddling concession, a foreign employee whose employment continuously spans two calendar years with a combined stay of at least 183 days is treated as tax resident for both years. So November–December income in the year of arrival is taxed at progressive resident rates (the first S$20,000 at 0%) instead of the 15% flat non-resident rate. If you leave before reaching 183 combined days, the concession is lost and that income is taxed at 15% flat with no reliefs.</p>
+
+  <h3>What is PTKP in Indonesia?</h3>
+  <p>PTKP (Penghasilan Tidak Kena Pajak) is the non-taxable income threshold before Indonesian income tax applies: Rp54,000,000 for a single person, an additional Rp4,500,000 if married, and an additional Rp4,500,000 per dependent for up to three dependents. A married employee with one dependent (K/1) therefore has a PTKP of Rp63,000,000 per year.</p>
+
+  <h3>How is THR (tunjangan hari raya) taxed in Indonesia?</h3>
+  <p>THR is part of your annual gross employment income and is taxed through the annual PPh 21 calculation — it is not taxed separately. Employer withholding spreads the tax over the year (monthly TER rates January–November, with December truing up to the full annual amount), so you never pay extra just because you received THR.</p>
+
+  <h3>What is biaya jabatan?</h3>
+  <p>Biaya jabatan is the Indonesian occupational-expense deduction for employees: 5% of gross employment income, capped at Rp6,000,000 per year (Rp500,000 per month). It is deducted automatically before PTKP when calculating taxable income (PKP).</p>
+
+  <h3>How much income tax do I pay on RM8,000/month in Malaysia?</h3>
+  <p>On RM96,000/year as a resident: individual relief RM9,000 plus EPF relief RM4,000 (from RM10,560 contributed) reduce chargeable income to RM83,000, giving tax of RM6,170 a year (effective rate ≈ 6.4%), or about RM514 a month.</p>
+
+  <h3>What is the RM400 tax rebate in Malaysia?</h3>
+  <p>Malaysian tax residents whose chargeable income is RM35,000 or less receive a flat RM400 rebate that is subtracted directly from the tax payable. For many lower-income employees this reduces their tax to zero.</p>
+
+  <h3>Do non-residents pay income tax in Malaysia?</h3>
+  <p>Yes. Non-resident individuals are taxed at a flat 30% on employment income with no reliefs or rebates. You are a Malaysian tax resident if you stay 182 days or more in a calendar year (with some continuity rules).</p>
+
+  <h3>Is this tax calculator free and private?</h3>
+  <p>Yes — it is completely free, requires no sign-up, and runs entirely in your browser. No income figures you enter are transmitted or stored anywhere.</p>
+</div>
 
   <div class="disclaimer">
     Estimates for education only, not tax advice.
