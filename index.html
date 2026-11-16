@@ -106,15 +106,26 @@
 
   <!-- ============ COMPARE ============ -->
   <div class="page active" id="page-cmp">
-    <div class="note">Enter one salary and see it taxed as a <b>standard single resident employee</b> in all three countries, converted to your display currency. CPF/EPF are retirement savings, not lost money — shown separately. Use the country tabs for full detail (age, dependants, marital status).</div>
+    <div class="note">Enter a salary (monthly or yearly) plus optional bonus and see it taxed as a <b>standard single resident employee</b> in all three countries, converted to your display currency. CPF/EPF are retirement savings, not lost money — shown separately. Use the country tabs for full detail (age, dependants, marital status).</div>
     <div class="card">
       <h2>💵 Your income</h2>
       <div class="row">
-        <div class="field grow2"><label for="cmp-salary">Monthly salary</label>
+        <div class="field"><label for="cmp-period">Pay period</label>
+          <select id="cmp-period">
+            <option value="mo" selected>Monthly</option>
+            <option value="yr">Yearly</option>
+          </select>
+        </div>
+        <div class="field grow2"><label for="cmp-salary" id="cmp-salary-label">Monthly salary</label>
           <input type="number" id="cmp-salary" placeholder="e.g. 5000" inputmode="decimal">
         </div>
         <div class="field"><label for="cmp-cur">Currency</label>
           <select id="cmp-cur"></select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field grow2"><label for="cmp-bonus">Bonus / 13th month (per yr)</label>
+          <input type="number" id="cmp-bonus" placeholder="optional" inputmode="decimal">
         </div>
         <div class="field"><label for="cmp-disp">Show in</label>
           <select id="cmp-disp"></select>
@@ -641,9 +652,13 @@ function cmpTaxFor(country, annualLocal, opts) {
 function computeCMP() {
   if (!cmpRates) return;
   const salary = Math.max(0, Number($('cmp-salary').value) || 0);
+  const bonus = Math.max(0, Number($('cmp-bonus').value) || 0);
+  const period = $('cmp-period').value;
   const cur = $('cmp-cur').value, disp = $('cmp-disp').value;
-  if (salary <= 0) { $('cmp-result').style.display = 'none'; return; }
-  const annualUSD = toUSD(salary * 12, cur);
+  $('cmp-salary-label').textContent = (period === 'yr' ? 'Yearly salary' : 'Monthly salary');
+  $('cmp-salary').placeholder = (period === 'yr' ? 'e.g. 60000' : 'e.g. 5000');
+  if (salary + bonus <= 0) { $('cmp-result').style.display = 'none'; return; }
+  const annualUSD = toUSD(salary * (period === 'yr' ? 1 : 12) + bonus, cur);
   const opts = { sgCpf: $('cmp-sgcpf').value, idStatus: Number($('cmp-idstatus').value) };
   const rows = [];
   const toDisp = (n, localCur) => toUSD(n, localCur) * cmpRates[disp];
@@ -672,7 +687,7 @@ function computeCMP() {
 ['my-res','my-age','my-salary','my-bonus','my-months','my-reliefs'].forEach(id => {
   $(id).addEventListener('input', computeMY); $(id).addEventListener('change', computeMY);
 });
-['cmp-salary','cmp-cur','cmp-disp','cmp-sgcpf','cmp-idstatus'].forEach(id => {
+['cmp-salary','cmp-bonus','cmp-period','cmp-cur','cmp-disp','cmp-sgcpf','cmp-idstatus'].forEach(id => {
   $(id).addEventListener('input', computeCMP); $(id).addEventListener('change', computeCMP);
 });
 cmpLoadFx().then(() => computeCMP());
