@@ -140,7 +140,7 @@
     </div>
     <div class="result" id="cmp-result" style="display:none">
       <table id="cmp-table"><thead><tr><th>Country</th><th>Income /yr</th><th>Tax /yr</th><th>Eff.</th><th>CPF/EPF /yr</th><th>Take-home /mo</th></tr></thead><tbody></tbody></table>
-      <div class="note" style="margin-top:8px">Sorted by take-home per month, in your display currency. SG assumes resident below 55 with the options above; ID and MY assume standard single residents.</div>
+      <div class="note" style="margin-top:8px">All amounts converted to your display currency at the FX rate shown. SG assumes resident below 55 with the options above; ID and MY assume standard single residents.</div>
     </div>
   </div>
 
@@ -646,15 +646,18 @@ function computeCMP() {
   const annualUSD = toUSD(salary * 12, cur);
   const opts = { sgCpf: $('cmp-sgcpf').value, idStatus: Number($('cmp-idstatus').value) };
   const rows = [];
+  const toDisp = (n, localCur) => toUSD(n, localCur) * cmpRates[disp];
   for (const [code, name, localCur] of [['SG', '🇸🇬 SG', 'SGD'], ['ID', '🇮🇩 ID', 'IDR'], ['MY', '🇲🇾 MY', 'MYR']]) {
     const annualLocal = fromUSD(annualUSD, localCur);
     const r = cmpTaxFor(code, annualLocal, opts);
-    rows.push({ country: name, localCur, annualLocal, tax: r.tax, eff: r.eff, savings: r.savings, dispTH: (annualUSD - toUSD(r.tax + r.savings, localCur)) / 12 * cmpRates[disp] });
+    rows.push({ country: name, dispIncome: toDisp(annualLocal, localCur), dispTax: toDisp(r.tax, localCur), dispSavings: toDisp(r.savings, localCur), eff: r.eff, dispTH: (annualUSD - toUSD(r.tax + r.savings, localCur)) / 12 });
   }
   rows.sort((a, b) => b.dispTH - a.dispTH);
+  $('cmp-table').querySelector('thead tr').innerHTML =
+    `<th>Country</th><th>Income /yr (${disp})</th><th>Tax /yr (${disp})</th><th>Eff.</th><th>CPF/EPF /yr (${disp})</th><th>Take-home /mo (${disp})</th>`;
   const tbody = $('cmp-table').querySelector('tbody');
   tbody.innerHTML = rows.map(r =>
-    `<tr><td>${r.country}</td><td>${cmpFmt(r.annualLocal, r.localCur)}</td><td>${cmpFmt(r.tax, r.localCur)}</td><td>${r.eff.toFixed(1)}%</td><td>${cmpFmt(r.savings, r.localCur)}</td><td><b>${cmpFmt(r.dispTH, disp)}</b></td></tr>`
+    `<tr><td>${r.country}</td><td>${cmpFmt(r.dispIncome, disp)}</td><td>${cmpFmt(r.dispTax, disp)}</td><td>${r.eff.toFixed(1)}%</td><td>${cmpFmt(r.dispSavings, disp)}</td><td><b>${cmpFmt(r.dispTH, disp)}</b></td></tr>`
   ).join('');
   $('cmp-result').style.display = '';
 }
