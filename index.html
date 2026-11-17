@@ -74,6 +74,7 @@
   .fb a:hover { color: #3b82f6; border-color: #3b82f6; }
   @media (prefers-color-scheme: dark) { .fb a { background: #262a31; color: #9aa0a6; border-color: #3a4048; } .fb a:hover { color: #60a5fa; border-color: #60a5fa; } }
   #cmp-table { font-size: 0.8rem; }
+  .tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   #cmp-table td, #cmp-table th { padding: 7px 6px; white-space: nowrap; }
   .content h2 { font-size: 1.05rem; margin: 22px 0 8px; }
   .content h3 { font-size: 0.9rem; margin: 14px 0 6px; }
@@ -150,7 +151,7 @@
       <div class="note" style="margin:6px 0 0" id="cmp-fxnote">loading rates…</div>
     </div>
     <div class="result" id="cmp-result" style="display:none">
-      <table id="cmp-table"><thead><tr><th>Country</th><th>Income /yr</th><th>Tax /yr</th><th>Eff.</th><th>CPF/EPF /yr</th><th>Take-home /mo</th></tr></thead><tbody></tbody></table>
+      <div class="tablewrap"><table id="cmp-table"><thead><tr><th>Country</th><th>Income /yr</th><th>Tax /yr</th><th>Eff.</th><th>CPF/EPF /yr</th><th>Take-home /mo</th></tr></thead><tbody></tbody></table></div>
       <div class="note" style="margin-top:8px">All amounts converted to your display currency at the FX rate shown. SG assumes resident below 55 with the options above; ID and MY assume standard single residents.</div>
     </div>
   </div>
