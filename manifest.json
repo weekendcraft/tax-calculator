@@ -1,11 +1,11 @@
 {
-  "name": "SG · ID Income Tax Calculator",
+  "name": "SG \u00b7 ID Income Tax Calculator",
   "short_name": "Tax Calc",
   "description": "Estimate Singapore and Indonesia personal income tax with auto reliefs",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f2f4f7",
-  "theme_color": "#059669",
+  "background_color": "#ffffff",
+  "theme_color": "#e2231a",
   "icons": [
     {
       "src": "icons/icon-192.png",
